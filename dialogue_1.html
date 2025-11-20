@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personality Clash Dialogue - Pair Assignment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            max-width: 900px;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .instruction-box {
+            background: rgba(255,255,255,0.95);
+            color: #2d3748;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            max-width: 900px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .instruction-box h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        .instruction-box p {
+            line-height: 1.8;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+        }
+
+        .instruction-box strong {
+            color: #764ba2;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 35px;
+            max-width: 1300px;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .card {
+            perspective: 1000px;
+            height: 450px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-back {
+            background: white;
+            transform: rotateY(180deg);
+            color: #2d3748;
+            overflow-y: auto;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 10px;
+            border-radius: 6px;
+            backdrop-filter: blur(5px);
+        }
+
+        .card-front .icon {
+            font-size: 4em;
+            margin-bottom: 25px;
+        }
+
+        .card-front .title {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
+
+        .card-front .subtitle {
+            font-size: 1.1em;
+            text-align: center;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .card-back .situation-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .role-section {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .role-section.person-a {
+            border-left-color: #667eea;
+        }
+
+        .role-section.person-b {
+            border-left-color: #f5576c;
+        }
+
+        .role-section h4 {
+            color: #667eea;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+            font-weight: bold;
+        }
+
+        .role-section.person-b h4 {
+            color: #f5576c;
+        }
+
+        .role-section p {
+            color: #4a5568;
+            line-height: 1.5;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+
+        .role-section ul {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+
+        .role-section li {
+            color: #4a5568;
+            font-size: 0.8em;
+            line-height: 1.4;
+            margin-bottom: 3px;
+        }
+
+        .dialogue-flow {
+            background: #fff5f5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #f093fb;
+        }
+
+        .dialogue-flow h5 {
+            color: #764ba2;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        .dialogue-flow ol {
+            margin-left: 18px;
+        }
+
+        .dialogue-flow li {
+            color: #4a5568;
+            font-size: 0.8em;
+            line-height: 1.4;
+            margin-bottom: 3px;
+        }
+
+        .footer {
+            color: white;
+            text-align: center;
+            margin-top: 50px;
+            opacity: 0.9;
+            font-size: 1em;
+            line-height: 2;
+            max-width: 900px;
+        }
+
+        .footer strong {
+            font-size: 1.1em;
+        }
+
+        .scoring-badge {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .card {
+                height: 480px;
+            }
+
+            .card-front .title {
+                font-size: 1.6em;
+            }
+
+            .instruction-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎭 Personality Clash Dialogue</h1>
+        <p>Work in pairs to create a spontaneous 3-4 minute dialogue</p>
+    </div>
+
+    <div class="instruction-box">
+        <h2>📋 How It Works:</h2>
+        <p><strong>Step 1:</strong> Find a partner and choose ONE situation together</p>
+        <p><strong>Step 2:</strong> Click the card to see both roles - Person A and Person B</p>
+        <p><strong>Step 3:</strong> Each person prepares their role individually (2-3 minutes)</p>
+        <p><strong>Step 4:</strong> Record your dialogue together (3-4 minutes)</p>
+        <p><strong>Remember:</strong> Use 6+ personality adjectives between both speakers, show emotion, and work toward compromise!</p>
+    </div>
+
+    <div class="container">
+        <!-- Card 1: Difficult Flatmate -->
+        <div class="card" data-card-number="1">
+            <div class="card-inner">
+                <div class="card-front">
+                    <div class="card-number">1</div>
+                    <div class="icon">🏠</div>
+                    <div class="title">Difficult Flatmate</div>
+                    <div class="subtitle">Organized vs. Laid-back personalities</div>
+                </div>
+                <div class="card-back">
+                    <div class="card-number">1</div>
+                    <div class="situation-title">Difficult Flatmate Conflict</div>
+                    
+                    <div class="role-section person-a">
+                        <h4>👤 PERSON A: Frustrated Flatmate</h4>
+                        <p><strong>Personality:</strong> Organized, conscientious, clean, punctual</p>
+                        <p><strong>Your adjectives:</strong> organized, tidy, responsible, considerate, conscientious</p>
+                        <p><strong>Complain about B:</strong> messy, disorganized, noisy, inconsiderate, irresponsible</p>
+                    </div>
+
+                    <div class="role-section person-b">
+                        <h4>👤 PERSON B: Relaxed Flatmate</h4>
+                        <p><strong>Personality:</strong> Laid-back, spontaneous, creative, easygoing</p>
+                        <p><strong>Your adjectives:</strong> laid-back, flexible, creative, friendly, spontaneous</p>
+                        <p><strong>Complain about A:</strong> uptight, rigid, perfectionist, controlling, obsessive</p>
+                    </div>
+
+                    <div class="dialogue-flow">
+                        <h5>💬 Dialogue Flow (3-4 min):</h5>
+                        <ol>
+                            <li>A: Complain about mess/noise (1 min)</li>
+                            <li>B: Defend yourself, A is too controlling (1 min)</li>
+                            <li>Both: Escalate with examples (1 min)</li>
+                            <li>Both: Compromise solution (1 min)</li>
+                        </ol>
+                    </div>
+
+                    <div class="scoring-badge">
+                        ⭐ Both partners get same score: 5 points max
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Team Project -->
+        <div class="card" data-card-number="2">
+            <div class="card-inner">
+                <div class="card-front">
+                    <div class="card-number">2</div>
+                    <div class="icon">👥</div>
+                    <div class="title">Team Project Clash</div>
+                    <div class="subtitle">Methodical planner vs. Spontaneous improviser</div>
+                </div>
+                <div class="card-back">
+                    <div class="card-number">2</div>
+                    <div class="situation-title">Team Project Clash</div>
+                    
+                    <div class="role-section person-a">
+                        <h4>👤 PERSON A: Methodical Planner</h4>
+                        <p><strong>Personality:</strong> Introverted, organized, perfectionist, detail-oriented</p>
+                        <p><strong>Your adjectives:</strong> methodical, organized, careful, thorough, responsible</p>
+                        <p><strong>Complain about B:</strong> impulsive, disorganized, unreliable, careless, last-minute</p>
+                    </div>
+
+                    <div class="role-section person-b">
+                        <h4>👤 PERSON B: Spontaneous Improviser</h4>
+                        <p><strong>Personality:</strong> Extroverted, spontaneous, creative, adaptable</p>
+                        <p><strong>Your adjectives:</strong> spontaneous, creative, adaptable, energetic, flexible</p>
+                        <p><strong>Complain about A:</strong> rigid, inflexible, boring, overly cautious, pessimistic</p>
+                    </div>
+
+                    <div class="dialogue-flow">
+                        <h5>💬 Dialogue Flow (3-4 min):</h5>
+                        <ol>
+                            <li>A: Concern about lack of planning (1 min)</li>
+                            <li>B: Defend spontaneity, A is too rigid (1 min)</li>
+                            <li>Both: Debate with project examples (1 min)</li>
+                            <li>Both: Negotiate based on strengths (1 min)</li>
+                        </ol>
+                    </div>
+
+                    <div class="scoring-badge">
+                        ⭐ Both partners get same score: 5 points max
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Friend Confrontation -->
+        <div class="card" data-card-number="3">
+            <div class="card-inner">
+                <div class="card-front">
+                    <div class="card-number">3</div>
+                    <div class="icon">💔</div>
+                    <div class="title">Friend Confrontation</div>
+                    <div class="subtitle">Concerned friend vs. Changed friend</div>
+                </div>
+                <div class="card-back">
+                    <div class="card-number">3</div>
+                    <div class="situation-title">Friend Confrontation</div>
+                    
+                    <div class="role-section person-a">
+                        <h4>👤 PERSON A: Concerned Friend</h4>
+                        <p><strong>Personality:</strong> Loyal, honest, genuine, observant</p>
+                        <p><strong>Your adjectives:</strong> loyal, honest, genuine, concerned, straightforward</p>
+                        <p><strong>Complain about B:</strong> arrogant, cold, materialistic, self-centered, superficial</p>
+                    </div>
+
+                    <div class="role-section person-b">
+                        <h4>👤 PERSON B: Changed Friend</h4>
+                        <p><strong>Personality:</strong> Ambitious, independent, mature, focused</p>
+                        <p><strong>Your adjectives:</strong> ambitious, independent, mature, focused, professional</p>
+                        <p><strong>Complain about A:</strong> jealous, judgmental, stuck in the past, unsupportive</p>
+                    </div>
+
+                    <div class="dialogue-flow">
+                        <h5>💬 Dialogue Flow (3-4 min):</h5>
+                        <ol>
+                            <li>A: Confront about becoming arrogant (1 min)</li>
+                            <li>B: Defend as growth, not arrogance (1 min)</li>
+                            <li>Both: Specific incidents discussed (1 min)</li>
+                            <li>Both: Reconcile or agree to disagree (1 min)</li>
+                        </ol>
+                    </div>
+
+                    <div class="scoring-badge">
+                        ⭐ Both partners get same score: 5 points max
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4: Manager-Employee -->
+        <div class="card" data-card-number="4">
+            <div class="card-inner">
+                <div class="card-front">
+                    <div class="card-number">4</div>
+                    <div class="icon">💼</div>
+                    <div class="title">Manager-Employee</div>
+                    <div class="subtitle">Performance review about personality</div>
+                </div>
+                <div class="card-back">
+                    <div class="card-number">4</div>
+                    <div class="situation-title">Manager-Employee Discussion</div>
+                    
+                    <div class="role-section person-a">
+                        <h4>👤 PERSON A: Manager</h4>
+                        <p><strong>Personality:</strong> Professional, direct, fair, results-oriented</p>
+                        <p><strong>Your adjectives:</strong> professional, direct, fair, pragmatic, solution-focused</p>
+                        <p><strong>Address B's trait:</strong> Choose ONE: too shy/introverted OR too impulsive OR too perfectionist OR too laid-back</p>
+                    </div>
+
+                    <div class="role-section person-b">
+                        <h4>👤 PERSON B: Employee (Choose YOUR type)</h4>
+                        <p><strong>If shy:</strong> introverted, thoughtful, careful, analytical, independent</p>
+                        <p><strong>If impulsive:</strong> spontaneous, quick-thinking, decisive, action-oriented</p>
+                        <p><strong>If perfectionist:</strong> detail-oriented, thorough, conscientious, reliable</p>
+                        <p><strong>If laid-back:</strong> calm, flexible, easygoing, stress-resistant, balanced</p>
+                    </div>
+
+                    <div class="dialogue-flow">
+                        <h5>💬 Dialogue Flow (3-4 min):</h5>
+                        <ol>
+                            <li>A: Raise concern about trait (1 min)</li>
+                            <li>B: Defend and reframe as strength (1 min)</li>
+                            <li>Both: Discuss work situations (1 min)</li>
+                            <li>Both: Agree on action plan (1 min)</li>
+                        </ol>
+                    </div>
+
+                    <div class="scoring-badge">
+                        ⭐ Both partners get same score: 5 points max
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>💡 Dialogue Requirements:</strong></p>
+        <p>✅ 3-4 minutes total duration</p>
+        <p>✅ 6+ personality adjectives (between both speakers)</p>
+        <p>✅ Complex sentences with subordinate clauses</p>
+        <p>✅ Specific examples from the situation</p>
+        <p>✅ Genuine emotional expression</p>
+        <p>✅ Natural turn-taking and reactions</p>
+        <p>✅ Work toward compromise by the end</p>
+        <p style="margin-top: 20px; opacity: 0.8;">🎤 Record together and submit to Telegram!</p>
+        <p style="margin-top: 10px; opacity: 0.7; font-size: 0.9em;">© 2024 Personality Clash Dialogue Assignment</p>
+    </div>
+
+    <script>
+        // Получаем все карточки
+        const cards = document.querySelectorAll('.card');
+
+        // Обработчик кликов на карточки - простое переворачивание
+        cards.forEach(card => {
+            card.addEventListener('click', function(event) {
+                // Переворачиваем карточку
+                this.classList.toggle('flipped');
+            });
+        });
+    </script>
+</body>
+</html>
